@@ -1,0 +1,189 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block title %}Danh sách Dịch vụ - Tra cứu Hành chính Công{% endblock %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-search"></i> Tra cứu Dịch vụ Hành chính Công
+        </h2>
+        <p class="text-muted">Tìm kiếm và tra cứu thông tin các thủ tục hành chính công trực tuyến</p>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="card p-4 mb-4 shadow-sm">
+    <form method="get" action="{% url 'services:service_list' %}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ search_form.title|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ search_form.public_sector|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                {{ search_form.department|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                {{ search_form.service_level|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                {{ search_form.jurisdiction|add_class:"form-control" }}
+            </div>
+            <div class="col-12 text-center mt-3">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-search"></i> Tìm kiếm
+                </button>
+                <a href="{% url 'services:service_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Search Results Info -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        {% if is_searching %}
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-funnel"></i> Kết quả tìm kiếm:
+            <span class="badge bg-primary">{{ total_services }} dịch vụ</span>
+        </h5>
+        {% else %}
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-list-check"></i> Tất cả dịch vụ:
+            <span class="badge bg-primary">{{ total_services }} dịch vụ</span>
+        </h5>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Services List -->
+{% if services %}
+<div class="row">
+    {% for service in services %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-level-{{ service.service_level }}">
+                        Mức {{ service.service_level }}
+                    </span>
+                    <span
+                        class="badge {% if 'Tỉnh' in service.get_jurisdiction_display %}bg-jurisdiction-provincial{% elif 'Huyện' in service.get_jurisdiction_display %}bg-jurisdiction-district{% elif 'Xã' in service.get_jurisdiction_display %}bg-jurisdiction-commune{% else %}bg-info text-dark{% endif %}">
+                        {{ service.get_jurisdiction_display }}
+                    </span>
+                </div>
+                <h5 class="card-title fw-bold">
+                    <a href="{% url 'services:service_detail' service.pk %}" class="text-decoration-none text-dark">
+                        {{ service.title }}
+                    </a>
+                </h5>
+
+                <p class="card-text text-muted small mb-2">
+                    <i class="bi bi-tag"></i> <strong>Lĩnh vực:</strong> {{ service.public_sector }}
+                </p>
+
+                <p class="card-text text-muted small mb-2">
+                    <i class="bi bi-building"></i> <strong>Cơ quan:</strong> {{ service.department }}
+                </p>
+
+                {% if service.processing_time %}
+                <p class="card-text text-muted small mb-2">
+                    <i class="bi bi-clock"></i> <strong>Thời gian:</strong> {{ service.processing_time }}
+                </p>
+                {% endif %}
+
+                {% if service.fee %}
+                <p class="card-text text-muted small mb-3">
+                    <i class="bi bi-cash"></i> <strong>Phí:</strong> {{ service.fee }}
+                </p>
+                {% endif %}
+
+                {% if service.description %}
+                <p class="card-text small text-muted">
+                    {{ service.description|truncatewords:20 }}
+                </p>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-white border-top-0">
+                <a href="{% url 'services:service_detail' service.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-eye"></i> Xem chi tiết
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1{% if query_string %}&{{ query_string }}{% endif %}">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link"
+                href="?page={{ page_obj.previous_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item">
+            <a class="page-link" href="?page={{ num }}{% if query_string %}&{{ query_string }}{% endif %}">
+                {{ num }}
+            </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.next_page_number }}{% if query_string %}&{{ query_string }}{% endif %}">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link"
+                    href="?page={{ page_obj.paginator.num_pages }}{% if query_string %}&{{ query_string }}{% endif %}">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            {% endif %}
+    </ul>
+
+    <div class="text-center text-muted small mt-2">
+        Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </div>
+</nav>
+{% endif %}
+
+{% else %}
+<!-- No Results -->
+<div class="text-center py-5">
+    <i class="bi bi-inbox" style="font-size: 4rem; color: #d1d5db;"></i>
+    <h4 class="mt-3 fw-bold">Không tìm thấy dịch vụ nào</h4>
+    <p class="text-muted">Vui lòng thử tìm kiếm với từ khóa khác hoặc điều chỉnh bộ lọc</p>
+    <a href="{% url 'services:service_list' %}" class="btn btn-primary">
+        <i class="bi bi-arrow-counterclockwise"></i> Xem tất cả dịch vụ
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

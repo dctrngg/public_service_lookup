@@ -1,0 +1,191 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block title %}{{ service.title }} - Chi tiết Dịch vụ{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb bg-white p-2 rounded shadow-sm">
+        <li class="breadcrumb-item">
+            <a href="{% url 'services:service_list' %}" class="text-decoration-none">
+                <i class="bi bi-house-door"></i> Trang chủ
+            </a>
+        </li>
+        <li class="breadcrumb-item active fw-semibold" aria-current="page">Chi tiết dịch vụ</li>
+    </ol>
+</nav>
+
+<!-- Service Title -->
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <div class="d-flex justify-content-between align-items-start flex-wrap">
+        <div>
+            <h2 class="fw-bold mb-3 text-primary">{{ service.title }}</h2>
+            <div class="mb-3">
+    <span class="badge bg-level-{{ service.service_level }} me-2">
+        <i class="bi bi-star"></i> Mức {{ service.service_level }} - {{ service.get_service_level_display }}
+    </span>
+    <span class="badge {% if 'Tỉnh' in service.get_jurisdiction_display %}bg-jurisdiction-provincial{% elif 'Huyện' in service.get_jurisdiction_display %}bg-jurisdiction-district{% elif 'Xã' in service.get_jurisdiction_display %}bg-jurisdiction-commune{% else %}bg-info text-dark{% endif %} me-2">
+        <i class="bi bi-geo-alt"></i> {{ service.get_jurisdiction_display }}
+    </span>
+    <span class="badge bg-secondary">
+        <i class="bi bi-tag"></i> {{ service.public_sector }}
+    </span>
+</div>
+        </div>
+        <div>
+            <a href="{% url 'services:service_list' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Basic Information -->
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-info-circle"></i> Thông tin Cơ bản</h5>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <p class="fw-semibold"><i class="bi bi-building"></i> Cơ quan Thực hiện:</p>
+            <p class="text-muted">{{ service.department }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <p class="fw-semibold"><i class="bi bi-clock"></i> Thời hạn Giải quyết:</p>
+            <p class="text-muted">{{ service.processing_time|default:"Chưa cập nhật" }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <p class="fw-semibold"><i class="bi bi-cash"></i> Phí và Lệ phí:</p>
+            <p class="text-muted">{{ service.fee|default:"Chưa cập nhật" }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <p class="fw-semibold"><i class="bi bi-telephone"></i> Liên hệ:</p>
+            <p class="text-muted">{{ service.contact_info|default:"Chưa cập nhật" }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Description -->
+
+{% if service.description %}
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-file-text"></i> Mô tả Thủ tục</h5>
+    <p class="text-justify">{{ service.description }}</p>
+</div>
+{% endif %}
+
+<!-- Legal Basis -->
+
+{% if legal_basis_list %}
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-journal-text"></i> Căn cứ Pháp lý</h5>
+    <ul class="list-group list-group-flush">
+        {% for legal in legal_basis_list %}
+        <li class="list-group-item border-0 ps-0">
+            <i class="bi bi-check-circle text-success"></i> {{ legal }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- Procedure Steps -->
+
+{% if procedure_steps_list %}
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-list-ol"></i> Trình tự Thực hiện</h5>
+    <ol class="list-group list-group-numbered">
+        {% for step in procedure_steps_list %}
+        <li class="list-group-item border-0 ps-0">
+            {{ step }}
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+{% endif %}
+
+<!-- Required Documents -->
+
+{% if required_documents_list %}
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-file-earmark-text"></i> Thành phần Hồ sơ</h5>
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> Các giấy tờ cần chuẩn bị khi nộp hồ sơ:
+    </div>
+    <ul class="list-group">
+        {% for document in required_documents_list %}
+        <li class="list-group-item border-0 ps-0">
+            <i class="bi bi-file-earmark-check text-primary"></i> {{ document }}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- Additional Information -->
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-exclamation-circle"></i> Lưu ý</h5>
+    <div class="alert alert-warning">
+        <ul class="mb-0">
+            <li>Vui lòng chuẩn bị đầy đủ hồ sơ theo quy định</li>
+            <li>Kiểm tra kỹ thông tin trước khi nộp hồ sơ</li>
+            <li>Liên hệ cơ quan thực hiện nếu cần hỗ trợ thêm</li>
+            <li>Lưu giữ biên nhận sau khi nộp hồ sơ</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+
+<div class="text-center mb-4">
+    <a href="{% url 'services:service_list' %}" class="btn btn-primary btn-lg me-2 shadow-sm">
+        <i class="bi bi-arrow-left"></i> Quay lại Danh sách
+    </a>
+    <button class="btn btn-success btn-lg shadow-sm" onclick="window.print()">
+        <i class="bi bi-printer"></i> In Thủ tục
+    </button>
+</div>
+
+<!-- Related Services Section -->
+
+<div class="detail-section shadow-sm p-4 rounded mb-4 bg-white">
+    <h5 class="fw-semibold mb-3"><i class="bi bi-link-45deg"></i> Có thể bạn quan tâm</h5>
+    <p class="text-muted">
+        Xem thêm các dịch vụ khác trong lĩnh vực
+        <a href="{% url 'services:service_list' %}?public_sector={{ service.public_sector }}"
+            class="fw-semibold text-decoration-none text-primary">
+            {{ service.public_sector }}
+        </a>
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    @media print {
+
+        .navbar,
+        .footer,
+        .breadcrumb,
+        button,
+        .btn {
+            display: none !important;
+        }
+
+        .detail-section {
+            box-shadow: none !important;
+            page-break-inside: avoid;
+        }
+    }
+</style>
+
+{% endblock %}

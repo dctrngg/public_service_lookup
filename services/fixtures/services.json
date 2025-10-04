@@ -1,0 +1,26 @@
+[
+  {
+    "model": "services.service",
+    "pk": 1,
+    "fields": {
+      "title": "Cấp Căn Cước Công Dân",
+      "description": "Đăng ký cấp, đổi, cấp lại thẻ căn cước công dân gắn chip.",
+      "department": "Công an phường/xã",
+      "procedure_steps": "Chuẩn bị hồ sơ; Nộp hồ sơ; Chụp ảnh, lăn tay; Nhận giấy hẹn; Nhận kết quả",
+      "contact_email": "cccd@police.gov.vn",
+      "contact_phone": "0123456789"
+    }
+  },
+  {
+    "model": "services.service",
+    "pk": 2,
+    "fields": {
+      "title": "Đăng ký khai sinh",
+      "description": "Thủ tục khai sinh cho trẻ em mới sinh.",
+      "department": "UBND phường/xã",
+      "procedure_steps": "Chuẩn bị giấy chứng sinh; Điền tờ khai; Nộp hồ sơ tại UBND; Nhận giấy khai sinh",
+      "contact_email": "khaitich@ubnd.gov.vn",
+      "contact_phone": "0987654321"
+    }
+  }
+]
