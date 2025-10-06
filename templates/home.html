@@ -73,7 +73,7 @@
 
     <div class="row g-4">
         <!-- Service 1: Tra cứu Dịch vụ -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="{% url 'services:service_list' %}" class="text-decoration-none">
                 <div class="card service-card shadow">
                     <div class="card-body p-5 text-center">
@@ -111,7 +111,7 @@
         </div>
 
         <!-- Service 2: Gửi Phản ánh -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="{% url 'submit_feedback' %}" class="text-decoration-none">
                 <div class="card service-card shadow">
                     <div class="card-body p-5 text-center">
@@ -142,6 +142,43 @@
                         </ul>
                         <div class="btn btn-success btn-lg w-100">
                             <i class="bi bi-arrow-right-circle"></i> Gửi phản ánh
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Service 3: Đường dây nóng -->    
+        <div class="col-md-4">
+            <a href="{% url 'contacts:contact_list' %}" class="text-decoration-none">
+                <div class="card service-card shadow">
+                    <div class="card-body p-5 text-center">
+                        <div class="service-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Đường Dây Nóng</h3>
+                        <p class="text-muted mb-4">
+                            Gửi ý kiến, phản ánh, kiến nghị về dịch vụ công. Chúng tôi lắng nghe và giải quyết nhanh chóng.
+                        </p>
+                        <ul class="list-unstyled text-start text-muted mb-4">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Cổng thông tin liên hệ
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Liên hệ nhanh chóng
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Theo dõi tiến độ xử lý
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                Bảo mật thông tin
+                            </li>
+                        </ul>
+                        <div class="btn btn-primary  btn-lg w-100">
+                            <i class="bi bi-arrow-right-circle"></i> Đường dây nóng
                         </div>
                     </div>
                 </div>

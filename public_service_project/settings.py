@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'services',  # App dịch vụ hành chính công
     "feedback",  # App phản hồi
     'widget_tweaks',
+     'contacts',
 ]
 
 MEDIA_URL = "/media/"

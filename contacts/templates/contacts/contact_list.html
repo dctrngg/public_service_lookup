@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Danh bạ liên hệ - Phòng ban phường{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-primary">
+            <i class="bi bi-telephone-fill me-2"></i>
+            Danh Bạ Liên Hệ
+        </h1>
+        <p class="lead text-muted">Thông tin liên hệ các phòng ban, đơn vị trên địa bàn phường</p>
+    </div>
+
+```
+<!-- Đường dây khẩn cấp -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card border-danger shadow">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Đường Dây Khẩn Cấp
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for contact in emergency_contacts %}
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-telephone-forward-fill text-danger fs-2"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 fw-bold">{{ contact.name }}</h6>
+                                <a href="tel:{{ contact.phone }}" class="text-danger fw-bold fs-5 text-decoration-none">
+                                    {{ contact.phone }}
+                                </a>
+                                {% if contact.description %}
+                                <p class="mb-0 small text-muted">{{ contact.description }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted mb-0">Chưa có thông tin đường dây khẩn cấp</p>
+                    {% endfor %}
+                </div>
+                <div class="text-end mt-2">
+                    <a href="{% url 'contacts:emergency_list' %}" class="btn btn-outline-danger btn-sm">
+                        Xem tất cả <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tìm kiếm và Filter -->
+<div class="row mb-4">
+    <div class="col-12">
+        <form method="get" class="search-card">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Tìm kiếm phòng ban..." 
+                           value="{{ search_query }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="type" class="form-select">
+                        <option value="">Tất cả phòng ban</option>
+                        {% for value, label in department_types %}
+                        <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i> Tìm kiếm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Danh sách phòng ban -->
+<div class="row">
+    {% for department in departments %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-header bg-white text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-building me-2"></i>
+                    {{ department.name }}
+                </h5>
+                <small class="badge bg-light text-dark">{{ department.get_department_type_display }}</small>
+            </div>
+            <div class="card-body">
+                {% if department.description %}
+                <p class="text-muted small mb-3">{{ department.description|truncatewords:20 }}</p>
+                {% endif %}
+
+                <!-- Thông tin liên hệ -->
+                <div class="mb-3">
+                    <div class="mb-2">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        <strong>Địa chỉ:</strong> {{ department.address }}
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-telephone-fill text-success me-2"></i>
+                        <strong>Điện thoại:</strong> 
+                        <a href="tel:{{ department.phone }}" class="text-decoration-none">
+                            {{ department.phone }}
+                        </a>
+                    </div>
+                    {% if department.hotline %}
+                    <div class="mb-2">
+                        <i class="bi bi-telephone-forward-fill text-danger me-2"></i>
+                        <strong>Hotline:</strong> 
+                        <a href="tel:{{ department.hotline }}" class="text-decoration-none text-danger fw-bold">
+                            {{ department.hotline }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% if department.email %}
+                    <div class="mb-2">
+                        <i class="bi bi-envelope-fill text-info me-2"></i>
+                        <strong>Email:</strong> 
+                        <a href="mailto:{{ department.email }}" class="text-decoration-none">
+                            {{ department.email }}
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="mb-2">
+                        <i class="bi bi-clock-fill text-warning me-2"></i>
+                        <strong>Giờ làm việc:</strong> {{ department.working_hours }}
+                    </div>
+                </div>
+
+                <!-- Người liên hệ -->
+                {% if department.contacts.all %}
+                <div class="border-top pt-3">
+                    <h6 class="text-primary mb-2">
+                        <i class="bi bi-person-lines-fill me-2"></i>
+                        Người liên hệ:
+                    </h6>
+                    {% for person in department.contacts.all|slice:":2" %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 small">
+                        <div>
+                            <strong>{{ person.full_name }}</strong>
+                            <span class="text-muted">- {{ person.get_full_position }}</span>
+                        </div>
+                        <a href="tel:{{ person.phone }}" class="btn btn-sm btn-outline-success">
+                            <i class="bi bi-telephone-fill"></i> {{ person.phone }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                    {% if department.contacts.all|length > 2 %}
+                    <small class="text-muted">Và {{ department.contacts.all|length|add:"-2" }} người khác...</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'contacts:department_detail' department.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                    Xem chi tiết <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Không tìm thấy phòng ban nào phù hợp.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+```
+
+</div>
+{% endblock %}

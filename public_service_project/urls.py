@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('services/', include('services.urls')),
     path("feedback/", include("feedback.urls")),
+    path('contact/', include('contacts.urls')), 
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]
 

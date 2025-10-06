@@ -50,9 +50,10 @@
                             <i class="bi bi-search"></i> Tra cứu Phản ánh
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/" target="_blank">
-                            <i class="bi bi-gear"></i> Quản trị
+
+                   <li class="nav-item">
+                         <a class="nav-link {% if request.resolver_match.url_name == 'contact_list' %}active{% endif %}" href="{% url 'contacts:contact_list' %}">
+                            <i class="bi bi-telephone"></i> Đường Dây Nóng
                         </a>
                     </li>
                 </ul>

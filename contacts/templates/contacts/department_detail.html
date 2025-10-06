@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ department.name }} - Thông tin liên hệ{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'contacts:contact_list' %}">Danh bạ liên hệ</a></li>
+            <li class="breadcrumb-item active">{{ department.name }}</li>
+        </ol>
+    </nav>
+
+```
+<!-- Header -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h1 class="h2 mb-2">
+            <i class="bi bi-building me-2"></i>
+            {{ department.name }}
+        </h1>
+        <span class="badge bg-light text-dark fs-6">{{ department.get_department_type_display }}</span>
+    </div>
+    
+    <div class="card-body">
+        {% if department.description %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            {{ department.description }}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <!-- Thông tin liên hệ -->
+            <div class="col-md-6">
+                <div class="detail-section">
+                    <h5>
+                        <i class="bi bi-telephone-fill me-2"></i>
+                        Thông tin liên hệ
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                            <strong>Địa chỉ:</strong> {{ department.address }}
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-telephone-fill text-success me-2"></i>
+                            <strong>Điện thoại:</strong>
+                            <a href="tel:{{ department.phone }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-telephone-fill me-1"></i>
+                                {{ department.phone }}
+                            </a>
+                        </li>
+                        {% if department.hotline %}
+                        <li class="mb-3">
+                            <i class="bi bi-telephone-forward-fill text-danger me-2"></i>
+                            <strong>Đường dây nóng:</strong>
+                            <a href="tel:{{ department.hotline }}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-telephone-forward-fill me-1"></i>
+                                {{ department.hotline }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if department.email %}
+                        <li class="mb-3">
+                            <i class="bi bi-envelope-fill text-info me-2"></i>
+                            <strong>Email:</strong>
+                            <a href="mailto:{{ department.email }}" class="btn btn-info btn-sm text-white">
+                                <i class="bi bi-envelope-fill me-1"></i>
+                                {{ department.email }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if department.fax %}
+                        <li class="mb-3">
+                            <i class="bi bi-printer-fill text-secondary me-2"></i>
+                            <strong>Fax:</strong> {{ department.fax }}
+                        </li>
+                        {% endif %}
+                        {% if department.website %}
+                        <li>
+                            <i class="bi bi-globe text-primary me-2"></i>
+                            <strong>Website:</strong>
+                            <a href="{{ department.website }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-box-arrow-up-right me-1"></i>
+                                Truy cập
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+</div>
+{% endblock %}

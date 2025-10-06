@@ -1,23 +1,29 @@
 {% load static %}
+
 <!-- feedback/templates/feedback/track.html -->
+
 <!DOCTYPE html>
+
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Tra cứu tình trạng phản ánh của bạn">
     <title>Tra Cứu Phản Ánh - Hệ Thống Tiếp Nhận Phản Ánh</title>
-    
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    
-    <!-- Shared CSS - Unified Design System -->
-    <link rel="stylesheet" href="{% static 'css/shared-ui.css' %}">
+
+```
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+<!-- Shared CSS - Unified Design System -->
+<link rel="stylesheet" href="{% static 'css/shared-ui.css' %}">
+```
+
 </head>
-<body class="gradient-bg-vertical">
+<body class="bg-light">
     <div class="track-container">
         <!-- Search Form Card -->
         <div class="search-card">
@@ -29,10 +35,9 @@
                     <input 
                         type="text" 
                         name="tracking_code" 
-                        class="form-control" 
+                        class="form-control text-uppercase" 
                         placeholder="Nhập mã theo dõi (VD: A1B2C3D4E5F6)"
                         value="{{ tracking_code }}"
-                        style="text-transform: uppercase;"
                         required
                         aria-label="Mã theo dõi"
                     >
@@ -42,153 +47,156 @@
                 </div>
             </form>
             <div class="text-center mt-3">
-                <a href="{% url 'submit_feedback' %}" class="text-decoration-none">
+                <a href="{% url 'submit_feedback' %}" class="text-decoration-none fw-semibold">
                     <i class="bi bi-plus-circle"></i> Gửi phản ánh mới
                 </a>
             </div>
         </div>
 
-        <!-- Messages -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- Feedback Details -->
-        {% if feedback %}
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <h4 class="mb-0">
-                        <i class="bi bi-file-text"></i> Thông Tin Phản Ánh
-                    </h4>
-                    <span class="badge bg-light text-dark fs-6 mt-2 mt-md-0">{{ feedback.tracking_code }}</span>
-                </div>
+```
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                <i class="bi bi-info-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
             </div>
-            <div class="card-body p-4">
-                <!-- Status Alert -->
-                <div class="alert alert-{% if feedback.status == 'resolved' %}success{% elif feedback.status == 'processing' %}info{% elif feedback.status == 'rejected' %}danger{% else %}warning{% endif %}">
-                    <div class="d-flex align-items-center flex-wrap">
-                        <div class="flex-grow-1">
-                            <h5 class="mb-0">
-                                <i class="bi bi-{% if feedback.status == 'resolved' %}check-circle{% elif feedback.status == 'processing' %}arrow-repeat{% elif feedback.status == 'rejected' %}x-circle{% else %}clock{% endif %}"></i>
-                                Trạng thái: {{ feedback.get_status_display }}
-                            </h5>
-                        </div>
-                        <span class="badge bg-{% if feedback.priority == 4 %}danger{% elif feedback.priority == 3 %}warning{% elif feedback.priority == 2 %}info{% else %}secondary{% endif %} fs-6 mt-2 mt-md-0">
-                            {{ feedback.get_priority_display }}
-                        </span>
-                    </div>
-                </div>
+        {% endfor %}
+    {% endif %}
 
-                <!-- Timeline -->
-                <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                        <i class="bi bi-clock-history"></i> Tiến độ xử lý:
-                    </h6>
-                    <div class="timeline">
-                        <div class="timeline-item {% if feedback.status == 'pending' or feedback.status == 'processing' or feedback.status == 'resolved' or feedback.status == 'rejected' %}active{% endif %}">
-                            <strong>Đã nhận phản ánh</strong>
-                            <br><small class="text-muted">{{ feedback.created_at|date:"d/m/Y H:i" }}</small>
-                        </div>
-                        <div class="timeline-item {% if feedback.status == 'processing' or feedback.status == 'resolved' %}active{% endif %}">
-                            <strong>Đang xử lý</strong>
-                            {% if feedback.status == 'processing' or feedback.status == 'resolved' %}
-                                <br><small class="text-muted">{{ feedback.updated_at|date:"d/m/Y H:i" }}</small>
-                            {% endif %}
-                        </div>
-                        <div class="timeline-item {% if feedback.status == 'resolved' %}active{% endif %}">
-                            <strong>Đã giải quyết</strong>
-                            {% if feedback.resolved_at %}
-                                <br><small class="text-muted">{{ feedback.resolved_at|date:"d/m/Y H:i" }}</small>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detailed Information -->
-                <h6 class="border-bottom pb-2 mb-3">
-                    <i class="bi bi-info-circle"></i> Thông tin chi tiết:
-                </h6>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <strong><i class="bi bi-person"></i> Người gửi:</strong><br>
-                        <span class="text-muted">{{ feedback.get_display_name }}</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong><i class="bi bi-telephone"></i> Số điện thoại:</strong><br>
-                        <span class="text-muted">{{ feedback.phone }}</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong><i class="bi bi-tag"></i> Danh mục:</strong><br>
-                        <span class="text-muted">{{ feedback.category.name }}</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong><i class="bi bi-calendar"></i> Ngày gửi:</strong><br>
-                        <span class="text-muted">{{ feedback.created_at|date:"d/m/Y H:i" }}</span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <strong><i class="bi bi-chat-left-text"></i> Tiêu đề:</strong><br>
-                    <p class="mt-2 text-muted">{{ feedback.title }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <strong><i class="bi bi-file-text"></i> Nội dung:</strong><br>
-                    <p class="mt-2 text-muted">{{ feedback.content|linebreaksbr }}</p>
-                </div>
-
-                {% if feedback.address %}
-                <div class="mb-3">
-                    <strong><i class="bi bi-geo-alt"></i> Địa chỉ:</strong><br>
-                    <p class="mt-2 text-muted">{{ feedback.address }}</p>
-                </div>
-                {% endif %}
-
-                <!-- Images -->
-                {% if feedback.images.all %}
-                <div class="mb-3">
-                    <strong><i class="bi bi-images"></i> Hình ảnh đính kèm ({{ feedback.images.count }}):</strong>
-                    <div class="image-gallery">
-                        {% for image in feedback.images.all %}
-                            <a href="{{ image.image.url }}" target="_blank">
-                                <img src="{{ image.image.url }}" alt="Hình ảnh {{ forloop.counter }}">
-                            </a>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- Admin Note -->
-                {% if feedback.admin_note %}
-                <div class="alert alert-info">
-                    <strong><i class="bi bi-chat-square-text"></i> Phản hồi từ quản trị viên:</strong><br>
-                    <p class="mb-0 mt-2">{{ feedback.admin_note|linebreaksbr }}</p>
-                </div>
-                {% endif %}
-            </div>
-            
-            <!-- Card Footer with Actions -->
-            <div class="card-footer bg-light text-center">
-                <a href="{% url 'track_feedback' %}" class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left"></i> Tra cứu khác
-                </a>
+    <!-- Feedback Details -->
+    {% if feedback %}
+    <div class="card shadow-lg mt-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h4 class="mb-0">
+                    <i class="bi bi-file-text"></i> Thông Tin Phản Ánh
+                </h4>
+                <span class="badge bg-light text-dark fs-6 mt-2 mt-md-0">{{ feedback.tracking_code }}</span>
             </div>
         </div>
-        {% endif %}
+        <div class="card-body">
+            <!-- Status Alert -->
+            <div class="alert alert-{% if feedback.status == 'resolved' %}success{% elif feedback.status == 'processing' %}info{% elif feedback.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                <div class="d-flex align-items-center flex-wrap">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-0">
+                            <i class="bi bi-{% if feedback.status == 'resolved' %}check-circle{% elif feedback.status == 'processing' %}arrow-repeat{% elif feedback.status == 'rejected' %}x-circle{% else %}clock{% endif %}"></i>
+                            Trạng thái: {{ feedback.get_status_display }}
+                        </h5>
+                    </div>
+                    <span class="badge bg-{% if feedback.priority == 4 %}danger{% elif feedback.priority == 3 %}warning{% elif feedback.priority == 2 %}info{% else %}secondary{% endif %} fs-6 mt-2 mt-md-0">
+                        {{ feedback.get_priority_display }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="mb-4">
+                <h6 class="mb-3">
+                    <i class="bi bi-clock-history"></i> Tiến độ xử lý:
+                </h6>
+                <div class="timeline">
+                    <div class="timeline-item {% if feedback.status in 'pending processing resolved rejected' %}active{% endif %}">
+                        <strong>Đã nhận phản ánh</strong>
+                        <br><small class="text-muted">{{ feedback.created_at|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <div class="timeline-item {% if feedback.status == 'processing' or feedback.status == 'resolved' %}active{% endif %}">
+                        <strong>Đang xử lý</strong>
+                        {% if feedback.status == 'processing' or feedback.status == 'resolved' %}
+                            <br><small class="text-muted">{{ feedback.updated_at|date:"d/m/Y H:i" }}</small>
+                        {% endif %}
+                    </div>
+                    <div class="timeline-item {% if feedback.status == 'resolved' %}active{% endif %}">
+                        <strong>Đã giải quyết</strong>
+                        {% if feedback.resolved_at %}
+                            <br><small class="text-muted">{{ feedback.resolved_at|date:"d/m/Y H:i" }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Information -->
+            <h6 class="mb-3">
+                <i class="bi bi-info-circle"></i> Thông tin chi tiết:
+            </h6>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <strong><i class="bi bi-person"></i> Người gửi:</strong><br>
+                    <span class="text-muted">{{ feedback.get_display_name }}</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong><i class="bi bi-telephone"></i> Số điện thoại:</strong><br>
+                    <span class="text-muted">{{ feedback.phone }}</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong><i class="bi bi-tag"></i> Danh mục:</strong><br>
+                    <span class="text-muted">{{ feedback.category.name }}</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong><i class="bi bi-calendar"></i> Ngày gửi:</strong><br>
+                    <span class="text-muted">{{ feedback.created_at|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <strong><i class="bi bi-chat-left-text"></i> Tiêu đề:</strong><br>
+                <p class="mt-2 text-muted">{{ feedback.title }}</p>
+            </div>
+
+            <div class="mb-3">
+                <strong><i class="bi bi-file-text"></i> Nội dung:</strong><br>
+                <p class="mt-2 text-muted">{{ feedback.content|linebreaksbr }}</p>
+            </div>
+
+            {% if feedback.address %}
+            <div class="mb-3">
+                <strong><i class="bi bi-geo-alt"></i> Địa chỉ:</strong><br>
+                <p class="mt-2 text-muted">{{ feedback.address }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Images -->
+            {% if feedback.images.all %}
+            <div class="mb-3">
+                <strong><i class="bi bi-images"></i> Hình ảnh đính kèm ({{ feedback.images.count }}):</strong>
+                <div class="image-gallery">
+                    {% for image in feedback.images.all %}
+                        <a href="{{ image.image.url }}" target="_blank">
+                            <img src="{{ image.image.url }}" alt="Hình ảnh {{ forloop.counter }}">
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Admin Note -->
+            {% if feedback.admin_note %}
+            <div class="alert alert-info">
+                <strong><i class="bi bi-chat-square-text"></i> Phản hồi từ quản trị viên:</strong><br>
+                <p class="mb-0 mt-2">{{ feedback.admin_note|linebreaksbr }}</p>
+            </div>
+            {% endif %}
+        </div>
         
-        <!-- Footer Note -->
-        <div class="text-center text-white mt-3">
-            <small><i class="bi bi-shield-check"></i> Thông tin được bảo mật an toàn</small>
+        <!-- Card Footer with Actions -->
+        <div class="card-footer text-center">
+            <a href="{% url 'track_feedback' %}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Tra cứu khác
+            </a>
         </div>
     </div>
+    {% endif %}
+    
+    <!-- Footer Note -->
+    <div class="text-center text-white mt-4">
+        <small><i class="bi bi-shield-check"></i> Thông tin được bảo mật an toàn</small>
+    </div>
+</div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap 5 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+```
+
 </body>
 </html>
